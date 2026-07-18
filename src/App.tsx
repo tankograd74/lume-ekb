@@ -331,9 +331,9 @@ function Hero() {
     >
       <img
         src={IMG.hero}
-        alt="Вывеска LUMÉ Beauty&Barbershop"
+        alt="LUMÉ — пространство твоего сияния"
         className="hero-photo absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: "center 42%" }}
+        style={{ objectPosition: "center center" }}
         fetchPriority="high"
       />
 
