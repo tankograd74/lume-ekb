@@ -293,7 +293,7 @@ body.demo-protected textarea {
 
 .svc-row {
   border-bottom: 1px solid rgba(28, 27, 25, 0.09);
-  transition: background 0.2s ease;
+  transition: background 0.35s ease;
   scroll-margin-top: 72px;
   scroll-margin-bottom: 24px;
 }
@@ -436,11 +436,35 @@ body.menu-open {
 }
 
 .accordion-panel {
-  display: none;
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .accordion-panel--open {
-  display: block;
+  grid-template-rows: 1fr;
+}
+
+.accordion-panel__inner {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.35s ease 0.05s,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.accordion-panel--open .accordion-panel__inner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion-panel,
+  .accordion-panel__inner {
+    transition: none;
+  }
 }
 
 .about-section {

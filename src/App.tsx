@@ -383,11 +383,21 @@ function ServicesSection() {
     const el = rowRefs.current[openId];
     if (!el) return;
 
-    const timer = window.setTimeout(() => {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 40);
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const behavior: ScrollBehavior = reduced ? "auto" : "smooth";
 
-    return () => window.clearTimeout(timer);
+    // Follow the expanding panel so the viewport stays centered while it opens
+    const t1 = window.setTimeout(() => {
+      el.scrollIntoView({ behavior, block: "center" });
+    }, reduced ? 0 : 120);
+    const t2 = window.setTimeout(() => {
+      el.scrollIntoView({ behavior, block: "center" });
+    }, reduced ? 0 : 420);
+
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
   }, [openId]);
 
   return (
@@ -455,7 +465,7 @@ function ServicesSection() {
 
                     <ChevronDown
                       size={18}
-                      className={`mt-[2px] ml-1 shrink-0 text-[#1C1B19] transition-transform duration-200 md:mt-0 ${
+                      className={`mt-[2px] ml-1 shrink-0 text-[#1C1B19] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:mt-0 ${
                         isOpen ? "rotate-180 opacity-80" : "opacity-35"
                       }`}
                       aria-hidden
@@ -467,9 +477,9 @@ function ServicesSection() {
                     role="region"
                     aria-labelledby={btnId}
                     className={`accordion-panel ${isOpen ? "accordion-panel--open" : ""}`}
-                    hidden={!isOpen}
+                    aria-hidden={!isOpen}
                   >
-                    {isOpen && (
+                    <div className="accordion-panel__inner">
                       <div className="pb-6 pl-8 md:pl-11">
                         <ul className="price-list">
                           {svc.items.map((item) => (
@@ -501,7 +511,7 @@ function ServicesSection() {
                           </a>
                         </div>
                       </div>
-                    )}
+                    </div>
                   </div>
                 </div>
               </Fade>
