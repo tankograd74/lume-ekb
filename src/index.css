@@ -309,7 +309,7 @@ body.demo-protected textarea {
   justify-content: center;
   min-height: 44px;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: 4px;
   text-decoration: none;
   cursor: pointer;
 }
