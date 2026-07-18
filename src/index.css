@@ -162,23 +162,70 @@ body.demo-protected textarea {
   background: linear-gradient(
     to top,
     #f5f3ef 0%,
-    rgba(245, 243, 239, 0.78) 26%,
-    rgba(245, 243, 239, 0.12) 58%,
-    transparent 78%
+    rgba(245, 243, 239, 0.92) 14%,
+    rgba(245, 243, 239, 0.45) 28%,
+    rgba(245, 243, 239, 0.08) 40%,
+    transparent 52%
   );
 }
 
 .hero-copy {
   position: relative;
   z-index: 1;
-  margin-top: -4.5rem;
-  padding: 0 0 3rem;
+  /* Slight pull into the cream fade only — stays below photo brand text */
+  margin-top: clamp(-1.75rem, -2.8vw, -0.75rem);
+  padding: 0.25rem 0 3rem;
 }
 
 @media (min-width: 768px) {
   .hero-copy {
-    margin-top: -6.5rem;
-    padding: 0 0 4.5rem;
+    margin-top: clamp(-2.25rem, -3vw, -1.25rem);
+    padding: 0.5rem 0 4.5rem;
+  }
+}
+
+.hero-copy__eyebrow {
+  margin-bottom: 0.75rem;
+  font-size: clamp(0.65rem, 0.55rem + 0.35vw, 0.8rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7a7469;
+}
+
+.hero-copy__title {
+  margin: 0 0 0.65rem;
+  font-family: "Gloock", Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 1.1rem + 3.8vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #1c1b19;
+}
+
+.hero-copy__lead {
+  margin: 0 0 clamp(1.5rem, 1.2rem + 1vw, 2.25rem);
+  max-width: min(36rem, 92%);
+  font-size: clamp(0.9rem, 0.78rem + 0.55vw, 1.2rem);
+  line-height: 1.55;
+  color: #7a7469;
+}
+
+.hero-copy__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(0.65rem, 0.5rem + 0.6vw, 1rem);
+}
+
+.hero-copy__actions .btn-ink,
+.hero-copy__actions .btn-ghost {
+  padding: clamp(0.65rem, 0.5rem + 0.4vw, 0.9rem)
+    clamp(1.35rem, 1rem + 1.2vw, 2rem);
+  font-size: clamp(0.85rem, 0.75rem + 0.35vw, 1rem);
+}
+
+@media (min-width: 768px) {
+  .hero-copy__eyebrow {
+    margin-bottom: 1rem;
   }
 }
 

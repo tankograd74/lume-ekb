@@ -341,38 +341,26 @@ function Hero() {
         <div className="mx-auto w-full max-w-[1200px] px-5 md:px-8">
           <h1 className="sr-only">Lumé</h1>
 
-          <p className="mb-3 text-[11px] uppercase tracking-[0.14em] text-[#7A7469] md:mb-4">
+          <p className="hero-copy__eyebrow">
             Екатеринбург · Готвальда, 22
           </p>
 
-          <p
-            className="mb-2 leading-tight text-[#1C1B19]"
-            style={{
-              fontFamily: "'Gloock', Georgia, serif",
-              fontSize: "clamp(1.65rem, 4.5vw, 2.75rem)",
-              fontWeight: 400,
-            }}
-          >
-            Тихо. Стильно. Честно.
-          </p>
+          <p className="hero-copy__title">Тихо. Стильно. Честно.</p>
 
-          <p
-            className="mb-7 max-w-[420px] leading-relaxed text-[#7A7469] md:mb-8"
-            style={{ fontSize: "clamp(0.85rem, 1.4vw, 0.95rem)" }}
-          >
+          <p className="hero-copy__lead">
             Салон красоты и барбершоп — персональный подход без суеты.
           </p>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="hero-copy__actions">
             <a
               href={BOOKING}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-ink px-6 py-2.5 text-sm sm:px-7"
+              className="btn-ink"
             >
               Записаться
             </a>
-            <a href="#services" className="btn-ghost px-6 py-2.5 text-sm sm:px-7">
+            <a href="#services" className="btn-ghost">
               Смотреть услуги
             </a>
           </div>
