@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "sync:prices": "python3 scripts/sync_yandex_prices.py"
+    "update:prices": "bash scripts/update_prices.sh"
   },
   "dependencies": {
     "lucide-react": "^0.487.0",
