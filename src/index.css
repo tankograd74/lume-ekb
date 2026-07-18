@@ -292,27 +292,8 @@ body.demo-protected textarea {
 }
 
 .svc-row {
-  position: relative;
   border-bottom: 1px solid rgba(28, 27, 25, 0.09);
-  transition: background 0.35s ease;
-  scroll-margin-top: 72px;
-  scroll-margin-bottom: 24px;
-  overflow-anchor: none;
-}
-
-#services {
-  overflow-anchor: none;
-}
-
-.svc-powder {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 380px;
-  pointer-events: none;
-  z-index: 2;
-  overflow: visible;
+  transition: background 0.2s ease;
 }
 
 .svc-row > button {
@@ -453,35 +434,11 @@ body.menu-open {
 }
 
 .accordion-panel {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+  display: none;
 }
 
 .accordion-panel--open {
-  grid-template-rows: 1fr;
-}
-
-.accordion-panel__inner {
-  overflow: hidden;
-  min-height: 0;
-  opacity: 0;
-  transform: translateY(-6px);
-  transition:
-    opacity 0.85s ease 0.12s,
-    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.accordion-panel--open .accordion-panel__inner {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .accordion-panel,
-  .accordion-panel__inner {
-    transition: none;
-  }
+  display: block;
 }
 
 .about-section {

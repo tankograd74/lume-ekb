@@ -370,196 +370,12 @@ function Hero() {
   );
 }
 
-type PowderParticle = {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  born: number;
-  life: number;
-  color: string;
-  wobble: number;
-};
-
-const POWDER_COLORS = [
-  "rgba(184, 146, 90, 0.9)",
-  "rgba(200, 168, 110, 0.8)",
-  "rgba(166, 124, 74, 0.75)",
-  "rgba(212, 184, 130, 0.7)",
-  "rgba(149, 118, 72, 0.65)",
-  "rgba(230, 208, 160, 0.55)",
-];
-
-function PowderBurst({ active }: { active: boolean }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const wasActive = useRef(false);
-
-  useEffect(() => {
-    const justOpened = active && !wasActive.current;
-    wasActive.current = active;
-    if (!justOpened) return;
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const parent = canvas.parentElement;
-    if (!parent) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const width = parent.clientWidth;
-    const height = 380;
-    canvas.width = Math.floor(width * dpr);
-    canvas.height = Math.floor(height * dpr);
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    // Spill from under the category header row (~2s total)
-    const originY = 52;
-    const count = width < 640 ? 55 : 85;
-    const particles: PowderParticle[] = [];
-    const t0 = performance.now();
-
-    for (let i = 0; i < count; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: originY + (Math.random() - 0.5) * 10,
-        vx: (Math.random() - 0.5) * 1.1,
-        vy: 0.18 + Math.random() * 0.75,
-        size: 0.7 + Math.random() * 2.6,
-        born: t0 + Math.random() * 250,
-        life: 1750 + Math.random() * 250,
-        color: POWDER_COLORS[(Math.random() * POWDER_COLORS.length) | 0],
-        wobble: Math.random() * Math.PI * 2,
-      });
-    }
-
-    let raf = 0;
-    let running = true;
-
-    const frame = (now: number) => {
-      if (!running) return;
-      ctx.clearRect(0, 0, width, height);
-
-      let alive = 0;
-      for (const p of particles) {
-        if (now < p.born) {
-          alive += 1;
-          continue;
-        }
-        const age = now - p.born;
-        if (age > p.life) continue;
-        alive += 1;
-
-        const t = age / p.life;
-        p.vy += 0.018;
-        p.vx += Math.sin(p.wobble + age * 0.005) * 0.008;
-        p.x += p.vx;
-        p.y += p.vy;
-
-        const alpha = t < 0.15 ? t / 0.15 : 1 - (t - 0.15) / 0.85;
-        ctx.globalAlpha = Math.max(0, alpha) * 0.95;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.ellipse(
-          p.x,
-          p.y,
-          p.size * 0.85,
-          p.size * 0.55,
-          p.wobble + age * 0.002,
-          0,
-          Math.PI * 2
-        );
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-
-      if (alive > 0) {
-        raf = requestAnimationFrame(frame);
-      } else {
-        ctx.clearRect(0, 0, width, height);
-      }
-    };
-
-    raf = requestAnimationFrame(frame);
-
-    return () => {
-      running = false;
-      cancelAnimationFrame(raf);
-      ctx.clearRect(0, 0, width, height);
-    };
-  }, [active]);
-
-  return (
-    <canvas
-      ref={canvasRef}
-      className="svc-powder"
-      aria-hidden="true"
-    />
-  );
-}
-
 function ServicesSection() {
   const [openId, setOpenId] = useState<string | null>(null);
-  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const toggle = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
-
-  useEffect(() => {
-    if (!openId) return;
-    const el = rowRefs.current[openId];
-    if (!el) return;
-
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const root = document.documentElement;
-    const prevAnchor = root.style.overflowAnchor;
-    root.style.overflowAnchor = "none";
-
-    const scrollHeaderToViewportCenter = () => {
-      const header = el.querySelector(":scope > button");
-      if (!(header instanceof HTMLElement)) return;
-
-      const fixedNavH = 62;
-      const available = window.innerHeight - fixedNavH;
-      // Center the category HEADER (not the full tall panel) on the
-      // visible midline — panel then expands downward in place.
-      const headerRect = header.getBoundingClientRect();
-      const headerCenterDoc = headerRect.top + window.scrollY + headerRect.height / 2;
-      const screenCenterDoc = window.scrollY + fixedNavH + available / 2;
-
-      let newScroll = window.scrollY + (headerCenterDoc - screenCenterDoc);
-      // Never lift the header above the fixed nav
-      const headerTopDoc = headerRect.top + window.scrollY;
-      const maxScroll = headerTopDoc - fixedNavH - 8;
-      newScroll = Math.min(Math.max(0, newScroll), maxScroll);
-
-      window.scrollTo({
-        top: newScroll,
-        // Instant: avoids fighting the 1.5s height animation / anchoring
-        behavior: "auto",
-      });
-    };
-
-    const timer = window.setTimeout(
-      () => requestAnimationFrame(scrollHeaderToViewportCenter),
-      reduced ? 0 : 16
-    );
-    const restore = window.setTimeout(() => {
-      root.style.overflowAnchor = prevAnchor;
-    }, reduced ? 0 : 1700);
-
-    return () => {
-      window.clearTimeout(timer);
-      window.clearTimeout(restore);
-      root.style.overflowAnchor = prevAnchor;
-    };
-  }, [openId]);
 
   return (
     <section id="services" className="py-20 md:py-32">
@@ -588,20 +404,16 @@ function ServicesSection() {
               <Fade key={svc.id} delay={Math.min(i + 1, 8)}>
                 <div
                   className="svc-row"
-                  ref={(node) => {
-                    rowRefs.current[svc.id] = node;
-                  }}
                   style={
                     isOpen
                       ? { background: "rgba(184, 146, 90, 0.04)" }
                       : undefined
                   }
                 >
-                  <PowderBurst active={isOpen} />
                   <button
                     type="button"
                     id={btnId}
-                    className="relative z-[1] flex w-full items-start gap-3 py-5 text-left md:items-center md:gap-6 md:py-[22px]"
+                    className="flex w-full items-start gap-3 py-5 text-left md:items-center md:gap-6 md:py-[22px]"
                     aria-expanded={isOpen}
                     aria-controls={panelId}
                     onClick={() => toggle(svc.id)}
@@ -627,7 +439,7 @@ function ServicesSection() {
 
                     <ChevronDown
                       size={18}
-                      className={`mt-[2px] ml-1 shrink-0 text-[#1C1B19] transition-transform duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] md:mt-0 ${
+                      className={`mt-[2px] ml-1 shrink-0 text-[#1C1B19] transition-transform duration-200 md:mt-0 ${
                         isOpen ? "rotate-180 opacity-80" : "opacity-35"
                       }`}
                       aria-hidden
@@ -638,10 +450,10 @@ function ServicesSection() {
                     id={panelId}
                     role="region"
                     aria-labelledby={btnId}
-                    className={`accordion-panel relative z-[1] ${isOpen ? "accordion-panel--open" : ""}`}
-                    aria-hidden={!isOpen}
+                    className={`accordion-panel ${isOpen ? "accordion-panel--open" : ""}`}
+                    hidden={!isOpen}
                   >
-                    <div className="accordion-panel__inner">
+                    {isOpen && (
                       <div className="pb-6 pl-8 md:pl-11">
                         <ul className="price-list">
                           {svc.items.map((item) => (
@@ -673,7 +485,7 @@ function ServicesSection() {
                           </a>
                         </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               </Fade>
