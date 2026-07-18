@@ -28,20 +28,6 @@ npm run build
 
 Статика в `dist/`. Для GitHub Pages используется `base: "./"`.
 
-## Прайс с Яндекс Карт
-
-Цены и позиции услуг подтягиваются со страницы
-https://yandex.ru/maps/org/lum_/83014772904/prices/
-
-```bash
-npm run sync:prices
-```
-
-GitHub Actions (`.github/workflows/sync-prices.yml`) запускает ту же синхронизацию
-каждые 3 часа. Если прайс изменился — коммит в репозиторий и деплой на Pages.
-
-Ручной запуск: Actions → **Sync Yandex prices** → Run workflow.
-
 ## Контакты в проекте
 
 - Телефон: +7 (982) 760-05-05
