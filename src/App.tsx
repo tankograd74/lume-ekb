@@ -521,26 +521,41 @@ function ServicesSection() {
     const scrollToFinalCenter = () => {
       const header = el.querySelector(":scope > button");
       const inner = el.querySelector(".accordion-panel__inner");
+      const list = el.querySelector(".price-list");
+      const ctaWrap = inner?.querySelector(":scope > div > .mt-5");
       if (!(header instanceof HTMLElement) || !(inner instanceof HTMLElement)) {
         return;
       }
 
-      // Final open height (inner is always in DOM; scrollHeight = full open body)
-      const finalH = header.offsetHeight + inner.scrollHeight;
-      const blockTop = el.getBoundingClientRect().top + window.scrollY;
-      const blockCenterY = blockTop + finalH / 2;
+      // Visual open height — respect .price-list max-height: min(52vh, 420px)
+      const listMax = Math.min(window.innerHeight * 0.52, 420);
+      const listH =
+        list instanceof HTMLElement
+          ? Math.min(list.scrollHeight, listMax)
+          : 0;
+      const ctaH =
+        ctaWrap instanceof HTMLElement ? ctaWrap.offsetHeight + 20 : 0; // + mt-5
+      const bodyPad = 24; // pb-6
+      const visualH = header.offsetHeight + listH + ctaH + bodyPad;
 
-      // Horizontal midline of the visible viewport (below fixed nav)
+      const blockTop = el.getBoundingClientRect().top + window.scrollY;
+      const blockCenterY = blockTop + visualH / 2;
+
       const fixedNavH = 62;
-      const screenCenterY = window.scrollY + fixedNavH + (window.innerHeight - fixedNavH) / 2;
+      const screenCenterY =
+        window.scrollY + fixedNavH + (window.innerHeight - fixedNavH) / 2;
+
+      let newScroll = window.scrollY + (blockCenterY - screenCenterY);
+      // Keep the category header below the fixed nav
+      const maxScroll = blockTop - fixedNavH - 8;
+      newScroll = Math.min(Math.max(0, newScroll), maxScroll);
 
       window.scrollTo({
-        top: Math.max(0, window.scrollY + (blockCenterY - screenCenterY)),
+        top: newScroll,
         behavior: reduced ? "auto" : "smooth",
       });
     };
 
-    // Measure after open state commits to the DOM
     const timer = window.setTimeout(
       () => {
         requestAnimationFrame(scrollToFinalCenter);
