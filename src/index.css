@@ -58,28 +58,47 @@ img {
 }
 
 .hero-media {
+  position: relative;
   width: 100%;
-  line-height: 0;
+  overflow: hidden;
+  aspect-ratio: 3200 / 1796;
   background: #c4b5a5;
+  line-height: 0;
 }
 
 .hero-photo {
   width: 100%;
-  height: auto;
-  aspect-ratio: 3200 / 1796;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
   object-position: center center;
+  animation: kenBurns 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.hero-fade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    #f5f3ef 0%,
+    rgba(245, 243, 239, 0.78) 26%,
+    rgba(245, 243, 239, 0.12) 58%,
+    transparent 78%
+  );
 }
 
 .hero-copy {
   position: relative;
   z-index: 1;
-  padding: 1.75rem 0 3rem;
+  margin-top: -4.5rem;
+  padding: 0 0 3rem;
 }
 
 @media (min-width: 768px) {
   .hero-copy {
-    padding: 2.25rem 0 4.5rem;
+    margin-top: -6.5rem;
+    padding: 0 0 4.5rem;
   }
 }
 

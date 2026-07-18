@@ -334,6 +334,7 @@ function Hero() {
           height={1796}
           fetchPriority="high"
         />
+        <div className="hero-fade" aria-hidden="true" />
       </div>
 
       <div className="hero-copy">
