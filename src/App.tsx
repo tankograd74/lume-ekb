@@ -418,7 +418,7 @@ function PowderBurst({ active }: { active: boolean }) {
     canvas.style.height = `${height}px`;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Spill from under the category header row
+    // Spill from under the category header row (~2s total)
     const originY = 52;
     const count = width < 640 ? 55 : 85;
     const particles: PowderParticle[] = [];
@@ -428,11 +428,11 @@ function PowderBurst({ active }: { active: boolean }) {
       particles.push({
         x: Math.random() * width,
         y: originY + (Math.random() - 0.5) * 10,
-        vx: (Math.random() - 0.5) * 1.8,
-        vy: 0.35 + Math.random() * 1.6,
+        vx: (Math.random() - 0.5) * 1.1,
+        vy: 0.18 + Math.random() * 0.75,
         size: 0.7 + Math.random() * 2.6,
-        born: t0 + Math.random() * 280,
-        life: 780 + Math.random() * 720,
+        born: t0 + Math.random() * 250,
+        life: 1750 + Math.random() * 250,
         color: POWDER_COLORS[(Math.random() * POWDER_COLORS.length) | 0],
         wobble: Math.random() * Math.PI * 2,
       });
@@ -456,8 +456,8 @@ function PowderBurst({ active }: { active: boolean }) {
         alive += 1;
 
         const t = age / p.life;
-        p.vy += 0.045;
-        p.vx += Math.sin(p.wobble + age * 0.008) * 0.012;
+        p.vy += 0.018;
+        p.vx += Math.sin(p.wobble + age * 0.005) * 0.008;
         p.x += p.vx;
         p.y += p.vy;
 
