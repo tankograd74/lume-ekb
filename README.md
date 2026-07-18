@@ -9,12 +9,13 @@
 
 - React 18 + TypeScript
 - Vite 5
-- Tailwind CSS 3
+- Tailwind CSS 4
 - Lucide icons
 
 ## Запуск
 
 ```bash
+cd site
 npm install
 npm run dev
 ```
@@ -26,19 +27,6 @@ npm run build
 ```
 
 Статика в `dist/`. Для GitHub Pages используется `base: "./"`.
-
-## Прайс с Яндекс Карт
-
-Источник: страница `/prices/` организации (`data/source.json`).
-
-```bash
-npm run update:prices
-```
-
-Скрипт тянет прайс, валидирует (≥50% от прошлого числа позиций) и обновляет `src/data/prices.ts`.  
-GitHub Actions (`.github/workflows/update-prices.yml`) — раз в неделю + ручной запуск.
-
-Сборка других салонов по тому же канону: Cursor skill `salon-site-factory`.
 
 ## Контакты в проекте
 
