@@ -517,38 +517,45 @@ function ServicesSection() {
     if (!el) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const root = document.documentElement;
+    const prevAnchor = root.style.overflowAnchor;
+    root.style.overflowAnchor = "none";
 
     const scrollToFinalCenter = () => {
       const header = el.querySelector(":scope > button");
-      const inner = el.querySelector(".accordion-panel__inner");
       const list = el.querySelector(".price-list");
-      const ctaWrap = inner?.querySelector(":scope > div > .mt-5");
-      if (!(header instanceof HTMLElement) || !(inner instanceof HTMLElement)) {
-        return;
-      }
+      const ctaWrap = el.querySelector(".accordion-panel__inner .mt-5");
+      if (!(header instanceof HTMLElement)) return;
 
-      // Visual open height — respect .price-list max-height: min(52vh, 420px)
+      // Same cap as CSS: max-height: min(52vh, 420px)
       const listMax = Math.min(window.innerHeight * 0.52, 420);
       const listH =
         list instanceof HTMLElement
           ? Math.min(list.scrollHeight, listMax)
           : 0;
       const ctaH =
-        ctaWrap instanceof HTMLElement ? ctaWrap.offsetHeight + 20 : 0; // + mt-5
+        ctaWrap instanceof HTMLElement
+          ? ctaWrap.getBoundingClientRect().height + 20
+          : 0;
       const bodyPad = 24; // pb-6
-      const visualH = header.offsetHeight + listH + ctaH + bodyPad;
-
-      const blockTop = el.getBoundingClientRect().top + window.scrollY;
-      const blockCenterY = blockTop + visualH / 2;
+      const measuredH = header.offsetHeight + listH + ctaH + bodyPad;
 
       const fixedNavH = 62;
-      const screenCenterY =
-        window.scrollY + fixedNavH + (window.innerHeight - fixedNavH) / 2;
+      const available = window.innerHeight - fixedNavH;
+      // Never aim using a height taller than the visible area
+      const visualH = Math.min(measuredH, available);
+
+      const blockTop = el.getBoundingClientRect().top + window.scrollY;
+      const screenCenterY = window.scrollY + fixedNavH + available / 2;
+      const blockCenterY = blockTop + visualH / 2;
 
       let newScroll = window.scrollY + (blockCenterY - screenCenterY);
-      // Keep the category header below the fixed nav
+
+      // Keep header under nav; keep block bottom from forcing extra jump
       const maxScroll = blockTop - fixedNavH - 8;
-      newScroll = Math.min(Math.max(0, newScroll), maxScroll);
+      const minScroll = blockTop + visualH - window.innerHeight + 8;
+      newScroll = Math.min(maxScroll, Math.max(minScroll, newScroll));
+      newScroll = Math.max(0, newScroll);
 
       window.scrollTo({
         top: newScroll,
@@ -557,13 +564,19 @@ function ServicesSection() {
     };
 
     const timer = window.setTimeout(
-      () => {
-        requestAnimationFrame(scrollToFinalCenter);
-      },
-      reduced ? 0 : 32
+      () => requestAnimationFrame(scrollToFinalCenter),
+      reduced ? 0 : 50
     );
+    // Keep anchoring disabled for the whole open animation
+    const restore = window.setTimeout(() => {
+      root.style.overflowAnchor = prevAnchor;
+    }, reduced ? 0 : 1600);
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      window.clearTimeout(restore);
+      root.style.overflowAnchor = prevAnchor;
+    };
   }, [openId]);
 
   return (
