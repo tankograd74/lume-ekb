@@ -558,9 +558,9 @@ function AtmosphereSection({
 }) {
   return (
     <section id="atmosphere" className="about-section">
-      <div className="about-shell">
-        <div className="about-layout">
-          <Fade className="about-copy">
+      <div className="split-shell">
+        <div className="split-layout">
+          <Fade className="split-copy">
             <span
               className="mb-6 block text-[11px] uppercase tracking-[0.14em] md:mb-8"
               style={{ color: "#B8925A" }}
@@ -618,10 +618,10 @@ function AtmosphereSection({
             </div>
           </Fade>
 
-          <Fade delay={1} className="about-media">
+          <Fade delay={1} className="split-media">
             <button
               type="button"
-              className="about-photo about-photo--single"
+              className="split-photo about-photo"
               onClick={() => onOpenGallery(ABOUT_GALLERY_START)}
               aria-label="Атмосфера Lumé. Открыть галерею работ"
             >
@@ -641,12 +641,12 @@ function AtmosphereSection({
 
 function VisitSection() {
   return (
-    <section id="visit" className="py-20 md:py-32">
-      <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-        <div className="grid items-start gap-12 md:grid-cols-2 md:gap-20">
-          <Fade>
+    <section id="visit" className="visit-section">
+      <div className="split-shell">
+        <div className="split-layout">
+          <Fade className="split-copy">
             <span
-              className="mb-8 block text-[11px] uppercase tracking-[0.14em] md:mb-10"
+              className="mb-6 block text-[11px] uppercase tracking-[0.14em] md:mb-8"
               style={{ color: "#B8925A" }}
             >
               Контакты
@@ -734,7 +734,7 @@ function VisitSection() {
               </div>
             </div>
 
-            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:mt-10 sm:flex-row">
               <a
                 href={BOOKING}
                 target="_blank"
@@ -754,15 +754,11 @@ function VisitSection() {
             </div>
           </Fade>
 
-          <Fade delay={1}>
-            <div
-              className="relative overflow-hidden bg-[#EDEAE4]"
-              style={{ borderRadius: 4, aspectRatio: "3/4", maxHeight: 560 }}
-            >
+          <Fade delay={1} className="split-media">
+            <div className="split-photo">
               <img
                 src={IMG.visit}
-                alt="Lumé Beauty&Barbershop — вывеска"
-                className="h-full w-full object-cover"
+                alt="Lumé Beauty&Barbershop — интерьер"
                 style={{ opacity: 0.72 }}
                 loading="lazy"
               />
