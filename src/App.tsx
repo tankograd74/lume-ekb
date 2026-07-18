@@ -2,6 +2,7 @@ import {
   useState,
   useEffect,
   useRef,
+  useCallback,
   type ReactNode,
 } from "react";
 import {
@@ -10,12 +11,20 @@ import {
   Clock,
   Menu,
   X,
+  ChevronDown,
+  ChevronLeft,
   ChevronRight,
   MessageCircle,
 } from "lucide-react";
+import {
+  SERVICE_CATEGORIES,
+  formatPrice,
+} from "./data/prices";
+import { GALLERY_PHOTOS } from "./data/gallery";
 
 const BOOKING = "https://n371595.yclients.com/";
 const MAPS = "https://yandex.ru/maps/org/lum_/83014772904/";
+const MAPS_REVIEWS = "https://yandex.ru/maps/org/lum_/83014772904/reviews/";
 const PHONE_TEL = "tel:+79827600505";
 const PHONE_LABEL = "+7 (982) 760-05-05";
 const TG = "https://t.me/lumeekb";
@@ -29,55 +38,32 @@ const IMG = {
   visit: "./images/visit.jpg",
 };
 
+const ABOUT_PREVIEW = [
+  {
+    src: IMG.atmosphere1,
+    alt: "Интерьер салона Lumé",
+    className: "about-photo about-photo--tall",
+    index: 1,
+  },
+  {
+    src: IMG.atmosphere2,
+    alt: "Работы и атмосфера Lumé",
+    className: "about-photo about-photo--wide",
+    index: 10,
+  },
+  {
+    src: IMG.atmosphere3,
+    alt: "Пространство салона Lumé",
+    className: "about-photo about-photo--mid",
+    index: 11,
+  },
+];
+
 const NAV_LINKS = [
   { label: "Услуги", href: "#services" },
-  { label: "Цены", href: "#prices" },
   { label: "Отзывы", href: "#reviews" },
   { label: "О нас", href: "#atmosphere" },
   { label: "Контакты", href: "#visit" },
-];
-
-const SERVICES = [
-  {
-    num: "01",
-    name: "Стрижки и укладки",
-    desc: "Женские, мужские, детские — под структуру волос и образ жизни",
-  },
-  {
-    num: "02",
-    name: "Окрашивание и уход",
-    desc: "Балаяж, осветление, тонирование, восстанавливающие процедуры",
-  },
-  {
-    num: "03",
-    name: "Маникюр",
-    desc: "Классика, гель-лак, аппаратный уход — внимание к деталям",
-  },
-  {
-    num: "04",
-    name: "Педикюр",
-    desc: "Классический, smart и аппаратный, покрытие гель-лаком",
-  },
-  {
-    num: "05",
-    name: "Брови и ресницы",
-    desc: "Архитектура, ламинирование, наращивание — точная работа",
-  },
-  {
-    num: "06",
-    name: "Лазерная эпиляция",
-    desc: "Диодный лазер — быстро, точно, без лишних слов",
-  },
-  {
-    num: "07",
-    name: "Массаж",
-    desc: "Расслабляющий, спортивный, лицевой — без спешки",
-  },
-  {
-    num: "08",
-    name: "Косметология и перманент",
-    desc: "Чистки, пилинги, мезотерапия, брови и губы",
-  },
 ];
 
 const REVIEWS = [
@@ -96,15 +82,6 @@ const REVIEWS = [
     service: "Массаж",
     text: "Огромная благодарность Асе за массаж. Индивидуальный подход и внимание к нюансам здоровья. Мало таких мастеров — нашла своего рядом с домом.",
   },
-];
-
-const PRICES = [
-  { name: "Женская стрижка", price: "2 000–2 500 ₽", note: "" },
-  { name: "Мужская стрижка", price: "800–1 400 ₽", note: "" },
-  { name: "Маникюр с покрытием", price: "1 900–2 450 ₽", note: "Зависит от мастера" },
-  { name: "Smart-педикюр", price: "от 1 900 ₽", note: "" },
-  { name: "Окрашивание корней", price: "от 3 500 ₽", note: "Техника и длина — индивидуально" },
-  { name: "Ламинирование ресниц", price: "от 2 000 ₽", note: "" },
 ];
 
 function useFade() {
@@ -149,6 +126,102 @@ function Fade({
   );
 }
 
+function GalleryModal({
+  open,
+  index,
+  onClose,
+  onIndex,
+}: {
+  open: boolean;
+  index: number;
+  onClose: () => void;
+  onIndex: (i: number) => void;
+}) {
+  const total = GALLERY_PHOTOS.length;
+
+  const prev = useCallback(() => {
+    onIndex((index - 1 + total) % total);
+  }, [index, onIndex, total]);
+
+  const next = useCallback(() => {
+    onIndex((index + 1) % total);
+  }, [index, onIndex, total]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    document.body.classList.add("menu-open");
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.classList.remove("menu-open");
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, onClose, prev, next]);
+
+  if (!open) return null;
+
+  return (
+    <div
+      className="gallery-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Галерея работ"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        className="gallery-modal__close"
+        onClick={onClose}
+        aria-label="Закрыть"
+      >
+        <X size={22} />
+      </button>
+
+      <button
+        type="button"
+        className="gallery-modal__nav gallery-modal__nav--prev"
+        onClick={(e) => {
+          e.stopPropagation();
+          prev();
+        }}
+        aria-label="Предыдущее фото"
+      >
+        <ChevronLeft size={28} />
+      </button>
+
+      <div
+        className="gallery-modal__frame"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <img
+          src={GALLERY_PHOTOS[index]}
+          alt={`Работа салона Lumé ${index + 1} из ${total}`}
+          className="gallery-modal__img"
+        />
+        <p className="gallery-modal__counter">
+          {index + 1} / {total}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        className="gallery-modal__nav gallery-modal__nav--next"
+        onClick={(e) => {
+          e.stopPropagation();
+          next();
+        }}
+        aria-label="Следующее фото"
+      >
+        <ChevronRight size={28} />
+      </button>
+    </div>
+  );
+}
+
 function Nav({ scrolled }: { scrolled: boolean }) {
   const [open, setOpen] = useState(false);
 
@@ -178,7 +251,10 @@ function Nav({ scrolled }: { scrolled: boolean }) {
             Lumé
           </a>
 
-          <nav className="hidden items-center gap-7 md:flex" aria-label="Основная навигация">
+          <nav
+            className="hidden items-center gap-7 md:flex"
+            aria-label="Основная навигация"
+          >
             {NAV_LINKS.map((l) => (
               <a
                 key={l.label}
@@ -276,9 +352,9 @@ function Hero() {
     >
       <img
         src={IMG.hero}
-        alt="Интерьер салона Lumé — светлое пространство на Готвальда, 22"
+        alt="Вывеска Lumé Beauty&Barbershop"
         className="hero-photo absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: "center 28%" }}
+        style={{ objectPosition: "center 35%" }}
         fetchPriority="high"
       />
 
@@ -344,12 +420,18 @@ function Hero() {
 }
 
 function ServicesSection() {
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const toggle = (id: string) => {
+    setOpenId((prev) => (prev === id ? null : id));
+  };
+
   return (
     <section id="services" className="py-20 md:py-32">
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
         <Fade>
           <div
-            className="mb-4 flex items-baseline justify-between pb-6"
+            className="mb-4 pb-6"
             style={{ borderBottom: "1px solid rgba(28,27,25,0.1)" }}
           >
             <span
@@ -358,47 +440,107 @@ function ServicesSection() {
             >
               Услуги
             </span>
-            <a
-              href="#prices"
-              className="text-[13px] text-[#7A7469] transition-colors hover:text-[#1C1B19]"
-            >
-              Весь прайс →
-            </a>
           </div>
         </Fade>
 
-        {SERVICES.map((svc, i) => (
-          <Fade key={svc.num} delay={Math.min(i + 1, 8)}>
-            <div className="svc-row">
-              <div className="flex items-start gap-3 py-5 md:items-center md:gap-6 md:py-[22px]">
-                <span
-                  className="mt-[3px] w-5 shrink-0 select-none text-[11px] font-medium md:mt-0"
-                  style={{ color: "#B8925A" }}
+        <div>
+          {SERVICE_CATEGORIES.map((svc, i) => {
+            const isOpen = openId === svc.id;
+            const panelId = `service-panel-${svc.id}`;
+            const btnId = `service-btn-${svc.id}`;
+
+            return (
+              <Fade key={svc.id} delay={Math.min(i + 1, 8)}>
+                <div
+                  className="svc-row"
+                  style={
+                    isOpen
+                      ? { background: "rgba(184, 146, 90, 0.04)" }
+                      : undefined
+                  }
                 >
-                  {svc.num}
-                </span>
-
-                <div className="min-w-0 flex-1 md:flex md:items-center md:gap-6">
-                  <span
-                    className="block text-[17px] leading-snug text-[#1C1B19] md:w-[280px] md:shrink-0 md:text-[19px]"
-                    style={{ fontFamily: "'Gloock', Georgia, serif" }}
+                  <button
+                    type="button"
+                    id={btnId}
+                    className="flex w-full items-start gap-3 py-5 text-left md:items-center md:gap-6 md:py-[22px]"
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
+                    onClick={() => toggle(svc.id)}
                   >
-                    {svc.name}
-                  </span>
-                  <span className="mt-1.5 block text-[13px] leading-relaxed text-[#7A7469] md:mt-0 md:flex-1">
-                    {svc.desc}
-                  </span>
-                </div>
+                    <span
+                      className="mt-[3px] w-5 shrink-0 select-none text-[11px] font-medium md:mt-0"
+                      style={{ color: "#B8925A" }}
+                    >
+                      {svc.id}
+                    </span>
 
-                <ChevronRight
-                  size={15}
-                  className="svc-arrow mt-[3px] ml-1 hidden shrink-0 text-[#1C1B19] sm:block md:mt-0"
-                  aria-hidden
-                />
-              </div>
-            </div>
-          </Fade>
-        ))}
+                    <div className="min-w-0 flex-1 md:flex md:items-center md:gap-6">
+                      <span
+                        className="block text-[17px] leading-snug text-[#1C1B19] md:w-[280px] md:shrink-0 md:text-[19px]"
+                        style={{ fontFamily: "'Gloock', Georgia, serif" }}
+                      >
+                        {svc.name}
+                      </span>
+                      <span className="mt-1.5 block text-[13px] leading-relaxed text-[#7A7469] md:mt-0 md:flex-1">
+                        {svc.desc}
+                      </span>
+                    </div>
+
+                    <ChevronDown
+                      size={18}
+                      className={`mt-[2px] ml-1 shrink-0 text-[#1C1B19] transition-transform duration-200 md:mt-0 ${
+                        isOpen ? "rotate-180 opacity-80" : "opacity-35"
+                      }`}
+                      aria-hidden
+                    />
+                  </button>
+
+                  <div
+                    id={panelId}
+                    role="region"
+                    aria-labelledby={btnId}
+                    className={`accordion-panel ${isOpen ? "accordion-panel--open" : ""}`}
+                    hidden={!isOpen}
+                  >
+                    {isOpen && (
+                      <div className="pb-6 pl-8 md:pl-11">
+                        <ul className="price-list">
+                          {svc.items.map((item) => (
+                            <li key={`${item.name}-${item.price}`} className="price-row">
+                              <div className="min-w-0 pr-4">
+                                <span className="text-[14px] leading-snug text-[#1C1B19] md:text-[15px]">
+                                  {item.name}
+                                </span>
+                                {item.description && (
+                                  <p className="mt-1 text-[12px] leading-relaxed text-[#7A7469] line-clamp-2">
+                                    {item.description}
+                                  </p>
+                                )}
+                              </div>
+                              <span className="shrink-0 text-[13px] font-medium tabular-nums text-[#1C1B19] md:text-[14px]">
+                                {formatPrice(item.price)}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                        <div className="mt-5">
+                          <a
+                            href={BOOKING}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="btn-ink px-5 py-2 text-[13px]"
+                          >
+                            Записаться
+                          </a>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Fade>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -444,7 +586,7 @@ function ReviewsSection() {
         <Fade delay={4}>
           <div className="mt-12 text-center md:mt-14">
             <a
-              href={`${MAPS}reviews/`}
+              href={MAPS_REVIEWS}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[13px] text-[#7A7469] transition-colors hover:text-[#1C1B19]"
@@ -458,71 +600,11 @@ function ReviewsSection() {
   );
 }
 
-function PricesSection() {
-  return (
-    <section id="prices" className="py-20 md:py-32">
-      <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-        <Fade>
-          <div
-            className="mb-8 flex flex-col gap-2 pb-6 sm:mb-10 sm:flex-row sm:items-baseline sm:justify-between"
-            style={{ borderBottom: "1px solid rgba(28,27,25,0.1)" }}
-          >
-            <span
-              className="text-[11px] uppercase tracking-[0.14em]"
-              style={{ color: "#B8925A" }}
-            >
-              Цены
-            </span>
-            <span className="text-[12px] text-[#7A7469]">
-              Ориентировочные — уточняется у мастера
-            </span>
-          </div>
-        </Fade>
-
-        <div className="grid gap-x-16 md:grid-cols-2 md:gap-x-20">
-          {PRICES.map((item, i) => (
-            <Fade key={item.name} delay={i + 1}>
-              <div
-                className="flex items-baseline justify-between gap-4 py-[14px]"
-                style={{ borderBottom: "1px solid rgba(28,27,25,0.07)" }}
-              >
-                <div className="min-w-0">
-                  <span className="text-[15px] text-[#1C1B19]">{item.name}</span>
-                  {item.note && (
-                    <p className="mt-[3px] text-[12px] text-[#7A7469]">
-                      {item.note}
-                    </p>
-                  )}
-                </div>
-                <span className="shrink-0 text-[14px] font-medium tabular-nums text-[#1C1B19]">
-                  {item.price}
-                </span>
-              </div>
-            </Fade>
-          ))}
-        </div>
-
-        <Fade delay={7}>
-          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-            <a
-              href={BOOKING}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-ink px-7 py-2.5 text-sm"
-            >
-              Записаться онлайн
-            </a>
-            <a href={PHONE_TEL} className="btn-ghost px-7 py-2.5 text-sm">
-              Позвонить и уточнить
-            </a>
-          </div>
-        </Fade>
-      </div>
-    </section>
-  );
-}
-
-function AtmosphereSection() {
+function AtmosphereSection({
+  onOpenGallery,
+}: {
+  onOpenGallery: (index: number) => void;
+}) {
   return (
     <section
       id="atmosphere"
@@ -530,8 +612,8 @@ function AtmosphereSection() {
       style={{ background: "#EDEAE4" }}
     >
       <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-        <div className="grid items-start gap-10 md:grid-cols-2 md:gap-16">
-          <Fade className="md:pt-6">
+        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+          <Fade className="lg:pt-4">
             <span
               className="mb-6 block text-[11px] uppercase tracking-[0.14em] md:mb-8"
               style={{ color: "#B8925A" }}
@@ -589,50 +671,26 @@ function AtmosphereSection() {
             </div>
           </Fade>
 
-          <div className="flex flex-col gap-3 sm:gap-4">
-            <Fade delay={1}>
-              <div
-                className="overflow-hidden bg-[#D4CFC8]"
-                style={{ borderRadius: 4, aspectRatio: "4/5", maxHeight: 520 }}
-              >
-                <img
-                  src={IMG.atmosphere1}
-                  alt="Рабочее пространство салона Lumé"
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-            </Fade>
-
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              <Fade delay={2}>
-                <div
-                  className="overflow-hidden bg-[#D4CFC8]"
-                  style={{ borderRadius: 4, aspectRatio: "1/1" }}
+          <Fade delay={1}>
+            <div className="about-grid">
+              {ABOUT_PREVIEW.map((photo) => (
+                <button
+                  key={photo.src}
+                  type="button"
+                  className={photo.className}
+                  onClick={() => onOpenGallery(photo.index)}
+                  aria-label={`${photo.alt}. Открыть галерею`}
                 >
                   <img
-                    src={IMG.atmosphere2}
-                    alt="Детали интерьера Lumé"
-                    className="h-full w-full object-cover"
+                    src={photo.src}
+                    alt={photo.alt}
                     loading="lazy"
                   />
-                </div>
-              </Fade>
-              <Fade delay={3}>
-                <div
-                  className="overflow-hidden bg-[#D4CFC8]"
-                  style={{ borderRadius: 4, aspectRatio: "1/1" }}
-                >
-                  <img
-                    src={IMG.atmosphere3}
-                    alt="Атмосфера салона Lumé"
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              </Fade>
+                  <span className="about-photo__hint">Смотреть работы</span>
+                </button>
+              ))}
             </div>
-          </div>
+          </Fade>
         </div>
       </div>
     </section>
@@ -757,13 +815,13 @@ function VisitSection() {
           <Fade delay={1}>
             <div
               className="relative overflow-hidden bg-[#EDEAE4]"
-              style={{ borderRadius: 4, aspectRatio: "4/5", maxHeight: 560 }}
+              style={{ borderRadius: 4, aspectRatio: "3/4", maxHeight: 560 }}
             >
               <img
                 src={IMG.visit}
-                alt="Интерьер салона Lumé"
+                alt="Lumé Beauty&Barbershop — вывеска"
                 className="h-full w-full object-cover"
-                style={{ opacity: 0.6 }}
+                style={{ opacity: 0.72 }}
                 loading="lazy"
               />
 
@@ -956,12 +1014,19 @@ function Footer() {
 
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
+  const [galleryIndex, setGalleryIndex] = useState(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 72);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const openGallery = (index: number) => {
+    setGalleryIndex(index);
+    setGalleryOpen(true);
+  };
 
   return (
     <div style={{ backgroundColor: "#F5F3EF", color: "#1C1B19" }}>
@@ -970,12 +1035,17 @@ export default function App() {
         <Hero />
         <ServicesSection />
         <ReviewsSection />
-        <PricesSection />
-        <AtmosphereSection />
+        <AtmosphereSection onOpenGallery={openGallery} />
         <VisitSection />
         <GiftStrip />
       </main>
       <Footer />
+      <GalleryModal
+        open={galleryOpen}
+        index={galleryIndex}
+        onClose={() => setGalleryOpen(false)}
+        onIndex={setGalleryIndex}
+      />
     </div>
   );
 }
