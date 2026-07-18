@@ -292,10 +292,22 @@ body.demo-protected textarea {
 }
 
 .svc-row {
+  position: relative;
   border-bottom: 1px solid rgba(28, 27, 25, 0.09);
   transition: background 0.35s ease;
   scroll-margin-top: 72px;
   scroll-margin-bottom: 24px;
+}
+
+.svc-powder {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 380px;
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
 }
 
 .svc-row > button {
