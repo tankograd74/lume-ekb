@@ -372,10 +372,23 @@ function Hero() {
 
 function ServicesSection() {
   const [openId, setOpenId] = useState<string | null>(null);
+  const rowRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const toggle = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id));
   };
+
+  useEffect(() => {
+    if (!openId) return;
+    const el = rowRefs.current[openId];
+    if (!el) return;
+
+    const timer = window.setTimeout(() => {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 40);
+
+    return () => window.clearTimeout(timer);
+  }, [openId]);
 
   return (
     <section id="services" className="py-20 md:py-32">
@@ -404,6 +417,9 @@ function ServicesSection() {
               <Fade key={svc.id} delay={Math.min(i + 1, 8)}>
                 <div
                   className="svc-row"
+                  ref={(node) => {
+                    rowRefs.current[svc.id] = node;
+                  }}
                   style={
                     isOpen
                       ? { background: "rgba(184, 146, 90, 0.04)" }

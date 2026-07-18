@@ -294,6 +294,8 @@ body.demo-protected textarea {
 .svc-row {
   border-bottom: 1px solid rgba(28, 27, 25, 0.09);
   transition: background 0.2s ease;
+  scroll-margin-top: 72px;
+  scroll-margin-bottom: 24px;
 }
 
 .svc-row > button {
