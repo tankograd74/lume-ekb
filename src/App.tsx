@@ -333,7 +333,6 @@ function Hero() {
         src={IMG.hero}
         alt="LUMÉ — пространство твоего сияния"
         className="hero-photo absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: "center center" }}
         fetchPriority="high"
       />
 
@@ -341,7 +340,7 @@ function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to top, #F5F3EF 0%, rgba(245,243,239,0.78) 26%, rgba(245,243,239,0.12) 58%, transparent 78%)",
+            "linear-gradient(to top, #F5F3EF 0%, rgba(245,243,239,0.88) 22%, rgba(245,243,239,0.45) 42%, rgba(245,243,239,0.08) 62%, transparent 78%)",
         }}
       />
 
