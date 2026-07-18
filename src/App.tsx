@@ -32,32 +32,11 @@ const WA = "https://wa.me/79827600505";
 
 const IMG = {
   hero: "./images/hero.jpg",
-  atmosphere1: "./images/atmosphere-1.jpg",
-  atmosphere2: "./images/atmosphere-2.jpg",
-  atmosphere3: "./images/atmosphere-3.jpg",
+  about: "./images/gallery/04.jpg",
   visit: "./images/visit.jpg",
 };
 
-const ABOUT_PREVIEW = [
-  {
-    src: IMG.atmosphere1,
-    alt: "Маникюр — работа мастера Lumé",
-    className: "about-photo about-photo--tall",
-    index: 1,
-  },
-  {
-    src: IMG.atmosphere2,
-    alt: "Оформление бровей — работа Lumé",
-    className: "about-photo about-photo--wide",
-    index: 18,
-  },
-  {
-    src: IMG.atmosphere3,
-    alt: "Массаж — работа мастера Lumé",
-    className: "about-photo about-photo--mid",
-    index: 6,
-  },
-];
+const ABOUT_GALLERY_START = 3; // gallery/04.jpg
 
 const NAV_LINKS = [
   { label: "Услуги", href: "#services" },
@@ -606,14 +585,10 @@ function AtmosphereSection({
   onOpenGallery: (index: number) => void;
 }) {
   return (
-    <section
-      id="atmosphere"
-      className="py-20 md:py-32"
-      style={{ background: "#EDEAE4" }}
-    >
-      <div className="mx-auto max-w-[1200px] px-5 md:px-8">
-        <div className="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
-          <Fade className="lg:pt-4">
+    <section id="atmosphere" className="about-section">
+      <div className="about-shell">
+        <div className="about-layout">
+          <Fade className="about-copy">
             <span
               className="mb-6 block text-[11px] uppercase tracking-[0.14em] md:mb-8"
               style={{ color: "#B8925A" }}
@@ -671,25 +646,20 @@ function AtmosphereSection({
             </div>
           </Fade>
 
-          <Fade delay={1}>
-            <div className="about-grid">
-              {ABOUT_PREVIEW.map((photo) => (
-                <button
-                  key={photo.src}
-                  type="button"
-                  className={photo.className}
-                  onClick={() => onOpenGallery(photo.index)}
-                  aria-label={`${photo.alt}. Открыть галерею`}
-                >
-                  <img
-                    src={photo.src}
-                    alt={photo.alt}
-                    loading="lazy"
-                  />
-                  <span className="about-photo__hint">Смотреть работы</span>
-                </button>
-              ))}
-            </div>
+          <Fade delay={1} className="about-media">
+            <button
+              type="button"
+              className="about-photo about-photo--single"
+              onClick={() => onOpenGallery(ABOUT_GALLERY_START)}
+              aria-label="Оформление бровей — работа Lumé. Открыть галерею"
+            >
+              <img
+                src={IMG.about}
+                alt="Оформление бровей — работа Lumé"
+                loading="lazy"
+              />
+              <span className="about-photo__hint">Смотреть работы</span>
+            </button>
           </Fade>
         </div>
       </div>

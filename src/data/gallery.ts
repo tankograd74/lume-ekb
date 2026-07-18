@@ -20,5 +20,4 @@ export const GALLERY_PHOTOS: string[] = [
   "./images/gallery/19.jpg",
   "./images/gallery/20.jpg",
   "./images/gallery/21.jpg",
-  "./images/gallery/22.jpg",
 ];
