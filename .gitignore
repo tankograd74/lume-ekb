@@ -1,0 +1,6 @@
+# Lumé site
+node_modules
+dist
+.DS_Store
+*.local
+.vite
