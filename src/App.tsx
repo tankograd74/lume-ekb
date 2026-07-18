@@ -41,21 +41,21 @@ const IMG = {
 const ABOUT_PREVIEW = [
   {
     src: IMG.atmosphere1,
-    alt: "Интерьер салона Lumé",
+    alt: "Маникюр — работа мастера Lumé",
     className: "about-photo about-photo--tall",
     index: 1,
   },
   {
     src: IMG.atmosphere2,
-    alt: "Работы и атмосфера Lumé",
+    alt: "Оформление бровей — работа Lumé",
     className: "about-photo about-photo--wide",
-    index: 10,
+    index: 18,
   },
   {
     src: IMG.atmosphere3,
-    alt: "Пространство салона Lumé",
+    alt: "Массаж — работа мастера Lumé",
     className: "about-photo about-photo--mid",
-    index: 11,
+    index: 6,
   },
 ];
 
