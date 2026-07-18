@@ -517,19 +517,26 @@ function ServicesSection() {
     if (!el) return;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const behavior: ScrollBehavior = reduced ? "auto" : "smooth";
 
-    const t1 = window.setTimeout(() => {
-      el.scrollIntoView({ behavior, block: "center" });
-    }, reduced ? 0 : 280);
-    const t2 = window.setTimeout(() => {
-      el.scrollIntoView({ behavior, block: "center" });
-    }, reduced ? 0 : 1100);
+    // Scroll once to the final expanded center — avoids center-then-drop bounce
+    const timer = window.setTimeout(() => {
+      const header = el.querySelector("button");
+      const inner = el.querySelector(".accordion-panel__inner");
+      const headerH = header instanceof HTMLElement ? header.offsetHeight : 0;
+      const bodyH = inner instanceof HTMLElement ? inner.scrollHeight : 0;
+      const finalH = headerH + bodyH;
+      const rowTop = el.getBoundingClientRect().top + window.scrollY;
+      const navOffset = 31; // half of fixed header, slight optical balance
+      const target =
+        rowTop + finalH / 2 - window.innerHeight / 2 - navOffset;
 
-    return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-    };
+      window.scrollTo({
+        top: Math.max(0, target),
+        behavior: reduced ? "auto" : "smooth",
+      });
+    }, reduced ? 0 : 40);
+
+    return () => window.clearTimeout(timer);
   }, [openId]);
 
   return (
