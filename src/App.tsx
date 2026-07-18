@@ -389,10 +389,10 @@ function ServicesSection() {
     // Follow the expanding panel so the viewport stays centered while it opens
     const t1 = window.setTimeout(() => {
       el.scrollIntoView({ behavior, block: "center" });
-    }, reduced ? 0 : 120);
+    }, reduced ? 0 : 200);
     const t2 = window.setTimeout(() => {
       el.scrollIntoView({ behavior, block: "center" });
-    }, reduced ? 0 : 420);
+    }, reduced ? 0 : 700);
 
     return () => {
       window.clearTimeout(t1);
@@ -465,7 +465,7 @@ function ServicesSection() {
 
                     <ChevronDown
                       size={18}
-                      className={`mt-[2px] ml-1 shrink-0 text-[#1C1B19] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:mt-0 ${
+                      className={`mt-[2px] ml-1 shrink-0 text-[#1C1B19] transition-transform duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] md:mt-0 ${
                         isOpen ? "rotate-180 opacity-80" : "opacity-35"
                       }`}
                       aria-hidden
