@@ -518,23 +518,35 @@ function ServicesSection() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // Scroll once to the final expanded center — avoids center-then-drop bounce
-    const timer = window.setTimeout(() => {
-      const header = el.querySelector("button");
+    const scrollToFinalCenter = () => {
+      const header = el.querySelector(":scope > button");
       const inner = el.querySelector(".accordion-panel__inner");
-      const headerH = header instanceof HTMLElement ? header.offsetHeight : 0;
-      const bodyH = inner instanceof HTMLElement ? inner.scrollHeight : 0;
-      const finalH = headerH + bodyH;
-      const rowTop = el.getBoundingClientRect().top + window.scrollY;
-      const navOffset = 31; // half of fixed header, slight optical balance
-      const target =
-        rowTop + finalH / 2 - window.innerHeight / 2 - navOffset;
+      if (!(header instanceof HTMLElement) || !(inner instanceof HTMLElement)) {
+        return;
+      }
+
+      // Final open height (inner is always in DOM; scrollHeight = full open body)
+      const finalH = header.offsetHeight + inner.scrollHeight;
+      const blockTop = el.getBoundingClientRect().top + window.scrollY;
+      const blockCenterY = blockTop + finalH / 2;
+
+      // Horizontal midline of the visible viewport (below fixed nav)
+      const fixedNavH = 62;
+      const screenCenterY = window.scrollY + fixedNavH + (window.innerHeight - fixedNavH) / 2;
 
       window.scrollTo({
-        top: Math.max(0, target),
+        top: Math.max(0, window.scrollY + (blockCenterY - screenCenterY)),
         behavior: reduced ? "auto" : "smooth",
       });
-    }, reduced ? 0 : 40);
+    };
+
+    // Measure after open state commits to the DOM
+    const timer = window.setTimeout(
+      () => {
+        requestAnimationFrame(scrollToFinalCenter);
+      },
+      reduced ? 0 : 32
+    );
 
     return () => window.clearTimeout(timer);
   }, [openId]);
