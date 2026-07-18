@@ -521,56 +521,38 @@ function ServicesSection() {
     const prevAnchor = root.style.overflowAnchor;
     root.style.overflowAnchor = "none";
 
-    const scrollToFinalCenter = () => {
+    const scrollHeaderToViewportCenter = () => {
       const header = el.querySelector(":scope > button");
-      const list = el.querySelector(".price-list");
-      const ctaWrap = el.querySelector(".accordion-panel__inner .mt-5");
       if (!(header instanceof HTMLElement)) return;
-
-      // Same cap as CSS: max-height: min(52vh, 420px)
-      const listMax = Math.min(window.innerHeight * 0.52, 420);
-      const listH =
-        list instanceof HTMLElement
-          ? Math.min(list.scrollHeight, listMax)
-          : 0;
-      const ctaH =
-        ctaWrap instanceof HTMLElement
-          ? ctaWrap.getBoundingClientRect().height + 20
-          : 0;
-      const bodyPad = 24; // pb-6
-      const measuredH = header.offsetHeight + listH + ctaH + bodyPad;
 
       const fixedNavH = 62;
       const available = window.innerHeight - fixedNavH;
-      // Never aim using a height taller than the visible area
-      const visualH = Math.min(measuredH, available);
+      // Center the category HEADER (not the full tall panel) on the
+      // visible midline — panel then expands downward in place.
+      const headerRect = header.getBoundingClientRect();
+      const headerCenterDoc = headerRect.top + window.scrollY + headerRect.height / 2;
+      const screenCenterDoc = window.scrollY + fixedNavH + available / 2;
 
-      const blockTop = el.getBoundingClientRect().top + window.scrollY;
-      const screenCenterY = window.scrollY + fixedNavH + available / 2;
-      const blockCenterY = blockTop + visualH / 2;
-
-      let newScroll = window.scrollY + (blockCenterY - screenCenterY);
-
-      // Keep header under nav; keep block bottom from forcing extra jump
-      const maxScroll = blockTop - fixedNavH - 8;
-      const minScroll = blockTop + visualH - window.innerHeight + 8;
-      newScroll = Math.min(maxScroll, Math.max(minScroll, newScroll));
-      newScroll = Math.max(0, newScroll);
+      let newScroll = window.scrollY + (headerCenterDoc - screenCenterDoc);
+      // Never lift the header above the fixed nav
+      const headerTopDoc = headerRect.top + window.scrollY;
+      const maxScroll = headerTopDoc - fixedNavH - 8;
+      newScroll = Math.min(Math.max(0, newScroll), maxScroll);
 
       window.scrollTo({
         top: newScroll,
-        behavior: reduced ? "auto" : "smooth",
+        // Instant: avoids fighting the 1.5s height animation / anchoring
+        behavior: "auto",
       });
     };
 
     const timer = window.setTimeout(
-      () => requestAnimationFrame(scrollToFinalCenter),
-      reduced ? 0 : 50
+      () => requestAnimationFrame(scrollHeaderToViewportCenter),
+      reduced ? 0 : 16
     );
-    // Keep anchoring disabled for the whole open animation
     const restore = window.setTimeout(() => {
       root.style.overflowAnchor = prevAnchor;
-    }, reduced ? 0 : 1600);
+    }, reduced ? 0 : 1700);
 
     return () => {
       window.clearTimeout(timer);
