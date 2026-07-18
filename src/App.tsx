@@ -966,10 +966,68 @@ function Footer() {
   );
 }
 
+function useDemoProtection() {
+  useEffect(() => {
+    document.body.classList.add("demo-protected");
+
+    const block = (e: Event) => {
+      e.preventDefault();
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      const mod = e.ctrlKey || e.metaKey;
+      if (mod && ["c", "x", "a", "s", "u", "p"].includes(key)) {
+        e.preventDefault();
+      }
+      if (e.key === "F12" || (mod && e.shiftKey && ["i", "j", "c"].includes(key))) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener("contextmenu", block);
+    document.addEventListener("selectstart", block);
+    document.addEventListener("dragstart", block);
+    document.addEventListener("copy", block);
+    document.addEventListener("cut", block);
+    document.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.classList.remove("demo-protected");
+      document.removeEventListener("contextmenu", block);
+      document.removeEventListener("selectstart", block);
+      document.removeEventListener("dragstart", block);
+      document.removeEventListener("copy", block);
+      document.removeEventListener("cut", block);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+}
+
+function DemoWatermark() {
+  const marks = Array.from({ length: 48 }, (_, i) =>
+    i % 2 === 0 ? "DEMO" : "РАЗРАБОТКА ПОД КЛЮЧ"
+  );
+
+  return (
+    <div className="demo-watermark" aria-hidden="true">
+      <div className="demo-watermark__pattern">
+        {marks.map((text, i) => (
+          <span key={i}>{text}</span>
+        ))}
+      </div>
+      <div className="demo-watermark__badge">DEMO</div>
+      <div className="demo-watermark__banner">Разработка под ключ</div>
+    </div>
+  );
+}
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [galleryIndex, setGalleryIndex] = useState(0);
+
+  useDemoProtection();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 72);
@@ -984,6 +1042,7 @@ export default function App() {
 
   return (
     <div style={{ backgroundColor: "#F5F3EF", color: "#1C1B19" }}>
+      <DemoWatermark />
       <Nav scrolled={scrolled} />
       <main>
         <Hero />
