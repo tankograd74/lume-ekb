@@ -44,17 +44,43 @@ img {
 
 @keyframes kenBurns {
   0% {
-    transform: scale(1.18) translateY(-10%) translateX(0);
+    transform: scale(1) translateX(0);
   }
   100% {
-    transform: scale(1.26) translateY(-12%) translateX(-8px);
+    transform: scale(1.06) translateX(-10px);
   }
 }
 
+.hero {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+.hero-media {
+  width: 100%;
+  line-height: 0;
+  background: #c4b5a5;
+}
+
 .hero-photo {
-  object-position: center 82%;
-  animation: kenBurns 18s ease-in-out infinite alternate;
-  will-change: transform;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3200 / 1796;
+  object-fit: contain;
+  object-position: center center;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  padding: 1.75rem 0 3rem;
+}
+
+@media (min-width: 768px) {
+  .hero-copy {
+    padding: 2.25rem 0 4.5rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

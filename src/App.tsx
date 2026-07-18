@@ -324,48 +324,32 @@ function Nav({ scrolled }: { scrolled: boolean }) {
 
 function Hero() {
   return (
-    <section
-      id="top"
-      className="relative overflow-hidden"
-      style={{ height: "100svh", minHeight: 560, maxHeight: 980 }}
-    >
-      <img
-        src={IMG.hero}
-        alt="LUMÉ — пространство твоего сияния"
-        className="hero-photo absolute inset-0 h-full w-full object-cover"
-        fetchPriority="high"
-      />
+    <section id="top" className="hero">
+      <div className="hero-media">
+        <img
+          src={IMG.hero}
+          alt="LUMÉ — пространство твоего сияния"
+          className="hero-photo"
+          width={3200}
+          height={1796}
+          fetchPriority="high"
+        />
+      </div>
 
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(to top, #F5F3EF 0%, rgba(245,243,239,0.88) 22%, rgba(245,243,239,0.45) 42%, rgba(245,243,239,0.08) 62%, transparent 78%)",
-        }}
-      />
+      <div className="hero-copy">
+        <div className="mx-auto w-full max-w-[1200px] px-5 md:px-8">
+          <h1 className="sr-only">Lumé</h1>
 
-      <div className="absolute inset-0 flex flex-col justify-end">
-        <div className="mx-auto w-full max-w-[1200px] px-5 pb-12 md:px-8 md:pb-20">
-          <p className="mb-4 text-[11px] uppercase tracking-[0.14em] text-[#7A7469] md:mb-5">
+          <p className="mb-3 text-[11px] uppercase tracking-[0.14em] text-[#7A7469] md:mb-4">
             Екатеринбург · Готвальда, 22
           </p>
-
-          <h1
-            className="mb-5 leading-[0.9] tracking-[-0.025em] text-[#1C1B19] md:mb-6"
-            style={{
-              fontFamily: "'Gloock', Georgia, serif",
-              fontWeight: 400,
-              fontSize: "clamp(3.25rem, 12vw, 9.5rem)",
-            }}
-          >
-            Lumé
-          </h1>
 
           <p
             className="mb-2 leading-tight text-[#1C1B19]"
             style={{
-              fontSize: "clamp(1.05rem, 2.4vw, 1.5rem)",
-              fontWeight: 300,
+              fontFamily: "'Gloock', Georgia, serif",
+              fontSize: "clamp(1.65rem, 4.5vw, 2.75rem)",
+              fontWeight: 400,
             }}
           >
             Тихо. Стильно. Честно.
