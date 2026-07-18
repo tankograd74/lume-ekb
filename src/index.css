@@ -338,6 +338,30 @@ body.menu-open {
   max-height: 560px;
 }
 
+.about-photo--single::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to left,
+    rgba(237, 234, 228, 0.08) 0%,
+    rgba(237, 234, 228, 0.28) 55%,
+    rgba(237, 234, 228, 0.52) 100%
+  );
+}
+
+@media (max-width: 899px) {
+  .about-photo--single::after {
+    background: linear-gradient(
+      to top,
+      rgba(237, 234, 228, 0.45) 0%,
+      rgba(237, 234, 228, 0.18) 45%,
+      rgba(237, 234, 228, 0.1) 100%
+    );
+  }
+}
+
 @media (min-width: 900px) {
   .about-photo--single {
     width: calc(100% + 2.5rem);
