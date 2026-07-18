@@ -450,7 +450,7 @@ body.menu-open {
 .accordion-panel {
   display: grid;
   grid-template-rows: 0fr;
-  transition: grid-template-rows 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: grid-template-rows 1.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .accordion-panel--open {
@@ -463,8 +463,8 @@ body.menu-open {
   opacity: 0;
   transform: translateY(-6px);
   transition:
-    opacity 0.55s ease 0.08s,
-    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 0.85s ease 0.12s,
+    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .accordion-panel--open .accordion-panel__inner {
