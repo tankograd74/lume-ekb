@@ -32,11 +32,11 @@ const WA = "https://wa.me/79827600505";
 
 const IMG = {
   hero: "./images/hero.jpg",
-  about: "./images/gallery/04.jpg",
+  about: "./images/about.jpg",
   visit: "./images/visit.jpg",
 };
 
-const ABOUT_GALLERY_START = 3; // gallery/04.jpg
+const ABOUT_GALLERY_START = 0;
 
 const NAV_LINKS = [
   { label: "Услуги", href: "#services" },
@@ -623,11 +623,11 @@ function AtmosphereSection({
               type="button"
               className="about-photo about-photo--single"
               onClick={() => onOpenGallery(ABOUT_GALLERY_START)}
-              aria-label="Оформление бровей — работа Lumé. Открыть галерею"
+              aria-label="Атмосфера Lumé. Открыть галерею работ"
             >
               <img
                 src={IMG.about}
-                alt="Оформление бровей — работа Lumé"
+                alt="Атмосфера салона Lumé"
                 loading="lazy"
               />
               <span className="about-photo__hint">Смотреть работы</span>
